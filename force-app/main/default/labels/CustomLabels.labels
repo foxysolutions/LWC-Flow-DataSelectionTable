@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>FDST_Filter</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>FDST Filter</shortDescription>
+        <value>Filter:</value>
+    </labels>
+    <labels>
+        <fullName>FDST_Validation_message_min_selection_required</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>FDST Validation message min selection required</shortDescription>
+        <value>Please select at least {0} records.</value>
+    </labels>
+</CustomLabels>

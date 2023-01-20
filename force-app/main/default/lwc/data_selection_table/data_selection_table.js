@@ -1,4 +1,6 @@
 import { LightningElement, api, track } from 'lwc';
+import LABEL_FILTER from '@salesforce/label/c.FDST_Filter';
+import LABEL_REQUIRED_MESSAGE from '@salesforce/label/c.FDST_Validation_message_min_selection_required';
 
 export default class DataSelectionTable extends LightningElement {
     // Input attributes
@@ -35,10 +37,10 @@ export default class DataSelectionTable extends LightningElement {
     get filterLabel(){
         if( this.records ){
             return ( this.optionSelect_None )
-                ? 'Filter: (' + this.records.length + ')'
-                : 'Filter: (' + this.selectedIds.length + '/' + this.records.length + ')';
+                ? LABEL_FILTER + ' (' + this.records.length + ')'
+                : LABEL_FILTER + ' (' + this.selectedIds.length + '/' + this.records.length + ')';
         } else{
-            return 'Filter:';
+            return LABEL_FILTER;
         }
     }
 
@@ -47,7 +49,7 @@ export default class DataSelectionTable extends LightningElement {
         if( this.in_selectionMin && this.selectedIds.length < this.in_selectionMin ) {
             return {
                 isValid: false,
-                errorMessage: 'Please select at least '+ this.in_selectionMin + ' records.'
+                errorMessage: LABEL_REQUIRED_MESSAGE?.replace( '{0}', this.in_selectionMin )
             };
         }
         return { isValid: true };
