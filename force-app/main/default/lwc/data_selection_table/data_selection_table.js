@@ -83,7 +83,7 @@ export default class DataSelectionTable extends LightningElement {
         }
 
         // Assign initial set of records to show, either filter by provided prefilled filter, or display full list
-        if( !isBlank( this.filter ) ){
+        if( !this.isBlank( this.filter ) ){
             this.filterRecords( { detail: { value: this.filter } } );
         } else{
             this.displayNewFilteredRecords( this.in_records );
@@ -98,7 +98,7 @@ export default class DataSelectionTable extends LightningElement {
      */
     displayNewFilteredRecords( newRecords ){
         this.records = newRecords;
-        this.numRecordsTotal = newRecords.length || 0;
+        this.numRecordsTotal = newRecords?.length || 0;
 
         // If number of records is higher than we initially want to load, only show the first in_initialNumRecords and set table to load more
         this.moreRecordsAvailable = ( this.numRecordsTotal > this.in_initialNumRecords );
@@ -117,11 +117,15 @@ export default class DataSelectionTable extends LightningElement {
      */
     setPaginatedRecords_prefixSelectedRecords( newRecordsToShow ){
         this.paginatedRecords = newRecordsToShow;
-        this.shownRecords = this.selectedRecordList.concat(
-            newRecordsToShow.filter( ( elem ) => {
-                return !this.selectedIds.includes( elem.Id );
-            }
-        ) );
+        if( newRecordsToShow?.length > 0 ){
+            this.shownRecords = this.selectedRecordList.concat(
+                newRecordsToShow.filter( ( elem ) => {
+                    return !this.selectedIds.includes( elem.Id );
+                }
+            ) );
+        } else{
+            this.shownRecords = [];
+        }
     }
 
     loadMoreData( evt ){
@@ -143,7 +147,7 @@ export default class DataSelectionTable extends LightningElement {
     filterRecords( evt ){
         this.filter = evt.detail.value;
         // When filter was 'cleared', reset the filteredRecords and display the full set
-        if( isBlank( this.filter ) ){
+        if( this.isBlank( this.filter ) ){
             this.records = this.in_records;
         } else{
             // Else, apply the filter on the total records list, after constructing the filter-object having the new requested string for each requested field;
@@ -151,7 +155,7 @@ export default class DataSelectionTable extends LightningElement {
             this.fieldsToFilter.forEach( ( field ) => {
                 filtersObj[ field ] = this.filter.toLowerCase();
             } );
-            this.records = filterByKeyValueObject( this.in_records, filtersObj );
+            this.records = this.filterByKeyValueObject( this.in_records, filtersObj );
         }
 
         this.displayNewFilteredRecords( this.records );
@@ -164,8 +168,6 @@ export default class DataSelectionTable extends LightningElement {
             this.selectedRecord = ( this.selectedRecordList.length > 0 ) ? this.selectedRecordList[ 0 ] : null;
         }
     }
-	
-	
 
     /**
      * Utility methods - normally in separate service-Component - but extracted to allow independent distribution
