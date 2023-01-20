@@ -8,6 +8,7 @@ export default class DataSelectionTable extends LightningElement {
     @api in_displayFieldsString;    // {String}         Comma-separated API Field names to display
     @api in_displayLabelsString;    // {String}         Opt. Comma-separated Labels for columns/labels to display
     @api in_filterFieldsString;     // {String}         Opt. Comma-separated API Field names to allow filtering on
+    @api in_filterLabelsString;     // {String}         Opt. Comma-separated Labels for fields to allow filtering on
     @api in_selectionMin;           // {Integer}        Opt. attribute to require a minimum number of records in selection
     @api in_selectionMax;           // {Integer}        0,1,2 to indicate whether the user should be able to select any record, or multiple
     @api in_initialNumRecords = 20; // {Integer}        Number of records which should initially be loaded, or appended via infinite loading
@@ -59,19 +60,23 @@ export default class DataSelectionTable extends LightningElement {
         // Set the Boolean whether records should be possible to be selected, or not
         this.optionSelect_None = ( this.in_selectionMax == 0 );
 
-        // Convert display fields to columns which is used by Lightning DataTable
-        let displayFields = this.in_displayFieldsString.split( ',' );
+        // Convert display fields (and opt. labels) to columns which are used by Lightning DataTable
+        let displayFields = this.in_displayFieldsString.replace( / /g, '' ).split( ',' );
         let displayLabels = this.in_displayLabelsString?.split( ',' );
         let showLabelsInsteadOfFieldAPI = ( displayLabels != null && displayLabels.length == displayFields.length );
         displayFields.forEach( ( fieldAPIName, i ) => {
-            fieldAPIName = fieldAPIName.trim();
             let columnLabel = ( showLabelsInsteadOfFieldAPI ) ? displayLabels[ i ].trim() : fieldAPIName;
             this.columns.push( { label: columnLabel, fieldName: fieldAPIName, type: String, sortable: true } );
         } );
 
         // Convert fields to filter to a List to allow looping
-        if( !isBlank( this.in_filterFieldsString ) ){
+        if( !this.isBlank( this.in_filterFieldsString ) ){
             this.fieldsToFilter = this.in_filterFieldsString.replace( / /g, '' ).split( ',' );
+            // When labels are provided to overrule the API Field values displayed in the filter-input placeholder,
+            // validate whether number of fields matches for filter API vs. filter Labels to prevent undesired situations, else reset
+            if( this.isBlank( this.in_filterLabelsString ) || this.in_filterLabelsString.split( ',' ).length != this.fieldsToFilter.length ){
+                this.in_filterLabelsString = this.in_filterFieldsString;
+            }
         }
 
         // Verify whether by input some records should be pre-selected, and fake as if the user performs the selection
