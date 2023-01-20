@@ -12,6 +12,7 @@ export default class DataSelectionTable extends LightningElement {
     @api in_selectionMin;           // {Integer}        Opt. attribute to require a minimum number of records in selection
     @api in_selectionMax;           // {Integer}        0,1,2 to indicate whether the user should be able to select any record, or multiple
     @api in_initialNumRecords = 20; // {Integer}        Number of records which should initially be loaded, or appended via infinite loading
+    @api in_tableHeight = '400px';  // {String}         Height of table to ensure lazy-loading, can be based on px (default) or relative (rem, em)
 
     // Output attributes
     @api selectedRecordList = [];   // {List<SObject>}  List of records which are selected and should be returned to the Flow
@@ -29,6 +30,7 @@ export default class DataSelectionTable extends LightningElement {
     fieldsToFilter;                 // {List<String>}   List of API names to filter on; comma-separated from in_filterFieldsString
     moreRecordsAvailable = false;   // {Boolean}        Indicating whether records.length > numRecordsTotal and with that enforce enable-infinite-loading
     optionSelect_None = false;      // {Boolean}        Whether or not selectionType == 0; used for conditional display
+    tableDiv_Styles;                // {String}         Textual concatenation of table height to ensure table only takes a certain height and allow lazy loading (else all is shown)
 
     /**
      * Method to construct the Label above the filter when necessary
@@ -59,6 +61,7 @@ export default class DataSelectionTable extends LightningElement {
     connectedCallback(){
         // Set the Boolean whether records should be possible to be selected, or not
         this.optionSelect_None = ( this.in_selectionMax == 0 );
+        this.tableDiv_Styles = 'height:' + this.in_tableHeight + ';';
 
         // Convert display fields (and opt. labels) to columns which are used by Lightning DataTable
         let displayFields = this.in_displayFieldsString.replace( / /g, '' ).split( ',' );

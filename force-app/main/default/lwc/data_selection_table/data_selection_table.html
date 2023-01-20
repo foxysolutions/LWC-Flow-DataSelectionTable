@@ -1,6 +1,6 @@
 <template>
-    <div style="height:400px;">
     <lightning-input label={filterLabel} value={filter} type="text" if:true={fieldsToFilter} onchange={filterRecords} placeholder={in_filterLabelsString}></lightning-input>
+    <div style={tableDiv_Styles}>
         <lightning-datatable if:true={optionSelect_None} hide-checkbox-column
              key-field="Id" data={shownRecords} columns={columns} selected-rows={selectedIds} onrowselection={handleSelection}
              show-row-number-column enable-infinite-loading={moreRecordsAvailable} onloadmore={loadMoreData} ></lightning-datatable>
